@@ -1,0 +1,101 @@
+#include <VirtualWire.h>
+
+// LED's
+
+const int ledPin = 13;
+
+int MsgData;
+
+//int Sensor2Data;
+
+char MsgcharAR[40]; 
+
+int length,data_available;
+
+int i;
+
+
+void setup() {
+
+ // PinModes 
+
+ // LED 
+
+ pinMode(ledPin,OUTPUT);
+
+// for debugging
+
+ Serial.begin(9600); 
+
+ // VirtualWire setup
+
+ vw_setup(2000);     // Bits per sec
+
+}
+
+
+void loop() {
+
+  length = 0;
+
+  while(Serial.available())
+
+  {
+
+  
+
+  MsgcharAR[length]  = Serial.read(); 
+
+   length++;
+
+   delay(100);
+
+   data_available = 1;
+
+  }
+
+
+// Convert integer data to Char array directly 
+
+//  itoa(data,Sensor1CharMsg,10);
+
+  if(data_available == 1)
+
+  {
+
+  // DEBUG
+
+  Serial.print(" Sending data :  ");
+
+  Serial.println(MsgcharAR);
+
+  //Serial.println(" ");
+
+  delay(1000);
+
+  // END DEBUG
+
+
+digitalWrite(13, true); // Turn on a light to show transmitting
+
+ vw_send((uint8_t *) MsgcharAR, length);
+
+ vw_wait_tx(); // Wait until the whole message is gone
+
+ digitalWrite(13, false); // Turn off a light after transmission
+
+ delay(200); 
+
+ for(i = 0 ; i < 40 ; i++)
+
+ {
+
+   MsgcharAR [i] = 0;
+
+ }
+
+
+ }
+
+} // END void loop...
+
